@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 /// A country definition with image asset, dialing code and localized name.
 class Country extends Equatable {
@@ -22,11 +20,11 @@ class Country extends Equatable {
 
   /// Instantiates a [Country] with the specified [asset], [dialingCode] and [isoCode]
   const Country({
-    @required this.asset,
-    @required this.dialingCode,
-    @required this.isoCode,
-    @required this.currency,
-    @required this.currencyISO,
+    required this.asset,
+    required this.dialingCode,
+    required this.isoCode,
+    required this.currency,
+    required this.currencyISO,
     this.name = "",
   });
 
@@ -2297,7 +2295,7 @@ class Country extends Equatable {
 
   /// returns a country with the specified [isoCode] or ```null``` if
   /// none or more than 1 are found
-  static findByIsoCode(String isoCode) {
+  static findByIsoCode(String? isoCode) {
     return ALL.singleWhere(
       (item) => item.isoCode == isoCode,
     );
@@ -2305,11 +2303,11 @@ class Country extends Equatable {
 
   /// Creates a copy with modified values
   Country copyWith({
-    String name,
-    String isoCode,
-    String dialingCode,
-    String currency,
-    String currencyISO,
+    String? name,
+    String? isoCode,
+    String? dialingCode,
+    String? currency,
+    String? currencyISO,
   }) {
     return Country(
       name: name ?? this.name,
