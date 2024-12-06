@@ -9,8 +9,8 @@ export 'country.dart';
 const _platform = const MethodChannel('biessek.rocks/flutter_country_picker');
 
 Future<List<Country>> _fetchLocalizedCountryNames() async {
-  List<Country> renamed = new List();
-  Map result;
+  List<Country> renamed = <Country>[];
+  Map? result;
   try {
     var isoCodes = <String>[];
     Country.ALL.forEach((Country country) {
@@ -23,7 +23,7 @@ Future<List<Country>> _fetchLocalizedCountryNames() async {
   }
 
   for (var country in Country.ALL) {
-    renamed.add(country.copyWith(name: result[country.isoCode]));
+    renamed.add(country.copyWith(name: result![country.isoCode]));
   }
   renamed.sort(
       (Country a, Country b) => removeDiacritics(a.name).compareTo(b.name));
@@ -35,9 +35,9 @@ Future<List<Country>> _fetchLocalizedCountryNames() async {
 /// pre defined list, see [Country.ALL]
 class CountryPicker extends StatelessWidget {
   const CountryPicker({
-    Key key,
+    Key? key,
     this.selectedCountry,
-    @required this.onChanged,
+    required this.onChanged,
     this.dense = false,
     this.showFlag = true,
     this.showDialingCode = false,
@@ -51,7 +51,7 @@ class CountryPicker extends StatelessWidget {
     this.prioritizedCountries,
   }) : super(key: key);
 
-  final Country selectedCountry;
+  final Country? selectedCountry;
   final ValueChanged<Country> onChanged;
   final bool dense;
   final bool showFlag;
@@ -59,16 +59,16 @@ class CountryPicker extends StatelessWidget {
   final bool showName;
   final bool showCurrency;
   final bool showCurrencyISO;
-  final TextStyle nameTextStyle;
-  final TextStyle dialingCodeTextStyle;
-  final TextStyle currencyTextStyle;
-  final TextStyle currencyISOTextStyle;
-  final List<Country> prioritizedCountries;
+  final TextStyle? nameTextStyle;
+  final TextStyle? dialingCodeTextStyle;
+  final TextStyle? currencyTextStyle;
+  final TextStyle? currencyISOTextStyle;
+  final List<Country>? prioritizedCountries;
 
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
-    Country displayCountry = selectedCountry;
+    Country? displayCountry = selectedCountry;
 
     if (displayCountry == null) {
       displayCountry =
@@ -76,11 +76,11 @@ class CountryPicker extends StatelessWidget {
     }
 
     return dense
-        ? _renderDenseDisplay(context, displayCountry)
+        ? _renderDenseDisplay(context, displayCountry!)
         : _renderDefaultDisplay(context, displayCountry);
   }
 
-  _renderDefaultDisplay(BuildContext context, Country displayCountry) {
+  _renderDefaultDisplay(BuildContext context, Country? displayCountry) {
     return InkWell(
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -89,7 +89,7 @@ class CountryPicker extends StatelessWidget {
           if (showFlag)
             Container(
                 child: Image.asset(
-              displayCountry.asset,
+              displayCountry!.asset,
               package: "flutter_country_picker",
               height: 32.0,
               fit: BoxFit.fitWidth,
@@ -97,25 +97,25 @@ class CountryPicker extends StatelessWidget {
           if (showName)
             Container(
                 child: Text(
-              " ${displayCountry.name}",
+              " ${displayCountry!.name}",
               style: nameTextStyle,
             )),
           if (showDialingCode)
             Container(
                 child: Text(
-              " (+${displayCountry.dialingCode})",
+              " (+${displayCountry!.dialingCode})",
               style: dialingCodeTextStyle,
             )),
           if (showCurrency)
             Container(
                 child: Text(
-              " ${displayCountry.currency}",
+              " ${displayCountry!.currency}",
               style: currencyTextStyle,
             )),
           if (showCurrencyISO)
             Container(
                 child: Text(
-              " ${displayCountry.currencyISO}",
+              " ${displayCountry!.currencyISO}",
               style: currencyISOTextStyle,
             )),
           Icon(Icons.arrow_drop_down,
@@ -124,7 +124,7 @@ class CountryPicker extends StatelessWidget {
                   : Colors.white70),
         ],
       ),
-      onTap: () => _selectCountry(context, displayCountry),
+      onTap: () => _selectCountry(context, displayCountry!),
     );
   }
 
@@ -154,7 +154,7 @@ class CountryPicker extends StatelessWidget {
 
   Future<Null> _selectCountry(
       BuildContext context, Country defaultCountry) async {
-    final Country picked = await showCountryPicker(
+    final Country? picked = await showCountryPicker(
       context: context,
       defaultCountry: defaultCountry,
       prioritizedCountries: prioritizedCountries,
@@ -166,13 +166,13 @@ class CountryPicker extends StatelessWidget {
 
 /// Display a [Dialog] with the country list to selection
 /// you can pass and [defaultCountry], see [Country.findByIsoCode]
-Future<Country> showCountryPicker({
-  BuildContext context,
-  Country defaultCountry,
-  Widget Function(Country country, Image flag) customItemBuilder,
-  Widget Function(TextEditingController) customInputBuilder,
+Future<Country?> showCountryPicker({
+  required BuildContext context,
+  required Country defaultCountry,
+  Widget Function(Country country, Image flag)? customItemBuilder,
+  Widget Function(TextEditingController)? customInputBuilder,
   //List of countries that you want to show on the top of the list
-  List<Country> prioritizedCountries,
+  List<Country>? prioritizedCountries,
 }) async {
   assert(Country.findByIsoCode(defaultCountry.isoCode) != null);
 
@@ -188,13 +188,13 @@ Future<Country> showCountryPicker({
 }
 
 class _CountryPickerDialog extends StatelessWidget {
-  final Widget Function(Country country, Image flag) customItemBuilder;
-  final Widget Function(TextEditingController) customInputBuilder;
-  final List<Country> prioritizedCountries;
+  final Widget Function(Country country, Image flag)? customItemBuilder;
+  final Widget Function(TextEditingController)? customInputBuilder;
+  final List<Country>? prioritizedCountries;
 
   const _CountryPickerDialog(
-      {Key key,
-      Country defaultCountry,
+      {Key? key,
+      Country? defaultCountry,
       this.customItemBuilder,
       this.customInputBuilder,
       this.prioritizedCountries})
@@ -215,10 +215,10 @@ class _CountryPickerDialog extends StatelessWidget {
 }
 
 class CountryPickerBody extends StatefulWidget {
-  final Widget Function(Country country, Image flag) customItemBuilder;
-  final Widget Function(TextEditingController) customInputBuilder;
-  final List<Country> prioritizedCountries;
-  final Function(Country) onCountrySelected;
+  final Widget Function(Country country, Image flag)? customItemBuilder;
+  final Widget Function(TextEditingController)? customInputBuilder;
+  final List<Country>? prioritizedCountries;
+  final Function(Country)? onCountrySelected;
 
   CountryPickerBody({
     this.customItemBuilder,
@@ -233,8 +233,8 @@ class CountryPickerBody extends StatefulWidget {
 
 class _CountryPickerBodyState extends State<CountryPickerBody> {
   TextEditingController controller = new TextEditingController();
-  String filter;
-  List<Country> countries;
+  String? filter;
+  late List<Country> countries;
 
   @override
   void initState() {
@@ -253,7 +253,7 @@ class _CountryPickerBodyState extends State<CountryPickerBody> {
 
   List<Country> _sortByPrioritizedCountriesFirst(List<Country> countries) {
     final List<Country> prioritizedCountries =
-        List.from(widget.prioritizedCountries);
+        List.from(widget.prioritizedCountries!);
     if (prioritizedCountries != null && prioritizedCountries.isNotEmpty) {
       countries.removeWhere((c) => prioritizedCountries.contains(c));
       countries = prioritizedCountries..addAll(countries);
@@ -290,7 +290,7 @@ class _CountryPickerBodyState extends State<CountryPickerBody> {
                 ),
                 controller: controller,
               )
-            : widget.customInputBuilder(controller),
+            : widget.customInputBuilder!(controller),
         Expanded(
           child: Scrollbar(
             child: ListView.builder(
@@ -300,7 +300,7 @@ class _CountryPickerBodyState extends State<CountryPickerBody> {
                 if (_matchesFilter(country)) {
                   return InkWell(
                     child: widget.customItemBuilder != null
-                        ? widget.customItemBuilder(
+                        ? widget.customItemBuilder!(
                             country,
                             Image.asset(
                               country.asset,
@@ -329,7 +329,7 @@ class _CountryPickerBodyState extends State<CountryPickerBody> {
                           ),
                     onTap: () {
                       if (widget.onCountrySelected != null) {
-                        widget.onCountrySelected(country);
+                        widget.onCountrySelected!(country);
                       } else {
                         Navigator.pop(context, country);
                       }
@@ -348,8 +348,8 @@ class _CountryPickerBodyState extends State<CountryPickerBody> {
   bool _matchesFilter(Country country) {
     return filter == null ||
         filter == "" ||
-        country.name.toLowerCase().contains(filter.toLowerCase()) ||
-        country.isoCode.toLowerCase().contains(filter.toLowerCase()) ||
-        country.dialingCode.contains(filter);
+        country.name.toLowerCase().contains(filter!.toLowerCase()) ||
+        country.isoCode.toLowerCase().contains(filter!.toLowerCase()) ||
+        country.dialingCode.contains(filter!);
   }
 }
